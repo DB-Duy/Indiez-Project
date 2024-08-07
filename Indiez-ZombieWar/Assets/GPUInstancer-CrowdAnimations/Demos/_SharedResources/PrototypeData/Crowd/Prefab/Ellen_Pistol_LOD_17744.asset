@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9d8aa170c766b479188accfb1f709f, type: 3}
+  m_Name: Ellen_Pistol_LOD_17744
+  m_EditorClassIdentifier: 
+  prefabObject: {fileID: 3568986732492470400, guid: 5168c8b179ac1c74cb98bb37a57eac63,
+    type: 3}
+  isShadowCasting: 1
+  useCustomShadowDistance: 0
+  shadowDistance: 0
+  shadowLODMap:
+  - 0
+  - 4
+  - 0
+  - 0
+  - 1
+  - 5
+  - 0
+  - 0
+  - 2
+  - 6
+  - 0
+  - 0
+  - 3
+  - 7
+  - 0
+  - 0
+  useOriginalShaderForShadow: 1
+  cullShadows: 0
+  minDistance: 0
+  maxDistance: 500
+  isFrustumCulling: 1
+  isOcclusionCulling: 1
+  frustumOffset: 0.2
+  minCullingDistance: 0
+  occlusionOffset: 0
+  occlusionAccuracy: 1
+  boundsOffset: {x: 0, y: 0, z: 0}
+  isLODCrossFade: 0
+  isLODCrossFadeAnimate: 1
+  lodFadeTransitionWidth: 0.1
+  lodBiasAdjustment: 1
+  billboard:
+    billboardQuality: 1
+    atlasResolution: 2048
+    frameCount: 8
+    replaceLODCullWithBillboard: 1
+    isOverridingOriginalCutoff: 0
+    cutoffOverride: -1
+    billboardBrightness: 0.5
+    billboardDistance: 0.8
+    quadSize: 0
+    yPivotOffset: 0
+    albedoAtlasTexture: {fileID: 0}
+    normalAtlasTexture: {fileID: 0}
+    customBillboardInLODGroup: 0
+    useCustomBillboard: 0
+    customBillboardMesh: {fileID: 0}
+    customBillboardMaterial: {fileID: 0}
+    isBillboardShadowCasting: 0
+    billboardFaceCamPos: 0
+    normalStrength: 1
+  isBillboardDisabled: 0
+  useGeneratedBillboard: 0
+  checkedForBillboardExtensions: 0
+  autoUpdateTransformData: 0
+  treeType: 0
+  enableRuntimeModifications: 1
+  startWithRigidBody: 0
+  addRemoveInstancesAtRuntime: 1
+  extraBufferSize: 10000
+  addRuntimeHandlerScript: 0
+  hasRigidBody: 0
+  rigidbodyData:
+    useGravity: 0
+    angularDrag: 0
+    mass: 0
+    constraints: 0
+    drag: 0
+    isKinematic: 0
+    interpolation: 0
+  meshRenderersDisabled: 0
+  isTransformsSerialized: 0
+  serializedTransformData: {fileID: 0}
+  serializedTransformDataCount: 0
+  animationData: {fileID: 11400000, guid: eed39b49322551841bceb30800b75f1b, type: 2}
+  frameRate: 60
+  animatorCullingMode: 1
+  modelPrefabPath: 
+  hasNoAnimator: 0
+  clipList:
+  - {fileID: 7400000, guid: c3f8480e98b79a54c99d25e4ac9e0699, type: 3}
+  - {fileID: 7400000, guid: 29954e894e3cc914d85a3a1ef601f27b, type: 3}
+  - {fileID: 7400000, guid: e2f53901c49ab4a499c6ad2a10289302, type: 3}
+  - {fileID: 7400000, guid: 71cd51573c77d6a4dbe5e6746881ba76, type: 3}
+  - {fileID: 7400000, guid: cd05be6bd904c754689d420843973e79, type: 3}
+  - {fileID: 7400000, guid: c578f8d3096188042a18c46d7516eefb, type: 3}
+  - {fileID: 7400000, guid: 0bcf49cc5a66c3041aaba51ed1a3ce41, type: 3}
+  - {fileID: 7400000, guid: 97d3a2f66dfa0294a9ebc609db81ee85, type: 3}
+  - {fileID: 7400000, guid: 9c8d218869cfacf4bbb3757e0ca61fc8, type: 3}
+  - {fileID: 7400000, guid: 70767edad443e444d8affc379ece2111, type: 3}
+  - {fileID: 7400000, guid: ffc218e7643c73442afb56d8e32f066b, type: 3}
+  - {fileID: 7400000, guid: c176ed694fa0aad46b7f48ce074a3d4b, type: 3}
+  - {fileID: 7400000, guid: 0693a36fc1d498043ad9c0fea7717aea, type: 3}
+  - {fileID: 7400000, guid: 764e409a53f6f9f4aab3c859bec60cdf, type: 3}
+  - {fileID: 7400000, guid: e43b6ee6bf8ac2746a07c0fb7c5347aa, type: 3}
+  - {fileID: 7400004, guid: 74363d521e7bc85439eff3e083e5c620, type: 3}
+  - {fileID: 7400000, guid: 4570d560db5b0c241b9d581d5842b726, type: 3}
+  - {fileID: 7400000, guid: 6098df4e43618e94384ffef9abf5ecf6, type: 3}
+  - {fileID: 7400010, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400008, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400006, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400004, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400002, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400000, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400000, guid: 5fdffae2e9a64bc448351f6726000d2e, type: 3}
+  - {fileID: 7400000, guid: 76305d41ea5a3874bbf7883e79f6cf01, type: 3}
+  - {fileID: 7400000, guid: 26d555a6701f734459fc1aa1eb1ebd1b, type: 3}
+  - {fileID: 7400000, guid: b4a63f512acb9d94f8dda7873aaa27ed, type: 3}
+  - {fileID: 7400012, guid: 0bf07682299e34a4482833728fc2cd52, type: 3}
+  - {fileID: 7400000, guid: 92e2f3b25e8576e4b80723687c84f664, type: 3}
+  - {fileID: 7400000, guid: 7d8a47aed24ee4841afafafd35612ff2, type: 3}
+  - {fileID: 7400000, guid: 4c54731eff984e1499ec577ca2b1caa3, type: 3}
+  - {fileID: 7400000, guid: a1da69b45c242b942ba64856be35264e, type: 3}
+  hasOptionalRenderers: 0

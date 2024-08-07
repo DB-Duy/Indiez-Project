@@ -1,0 +1,24 @@
+# ProBuilder 4.0.5
+# https://unity3d.com/unity/features/worldbuilding/probuilder
+# 5/15/2019 9:31:18 AM
+
+mtllib ./Plane_100x100.mtl
+o Plane_100x100
+
+g Plane_100x100
+v 0 0 0
+v 0 0 100
+v -100 0 0
+v -100 0 100
+
+vt 0 0
+vt 0 100
+vt 100 0
+vt 100 100
+
+vn 0 1 0
+
+g Plane_100x100
+usemtl Mat-PrototypeGridWhite
+f 3/3/1 4/4/1 2/2/1 1/1/1
+

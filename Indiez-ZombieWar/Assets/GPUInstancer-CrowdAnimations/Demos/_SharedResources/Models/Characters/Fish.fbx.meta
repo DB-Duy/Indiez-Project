@@ -1,0 +1,170 @@
+fileFormatVersion: 2
+guid: 29851366b0ff9274e915c6827e9bd596
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Fish
+    100002: //RootNode
+    100004: Head
+    100006: Head_End
+    100008: Jaw
+    100010: Jaw_End
+    100012: Root
+    100014: SideFinLeft
+    100016: SideFinLeft1
+    100018: SideFinLeft2
+    100020: SideFinLeft_End
+    100022: SideFinRight
+    100024: SideFinRight1
+    100026: SideFinRight2
+    100028: SideFinRight_End
+    100030: Spine1
+    100032: Spine2
+    100034: Tail
+    100036: Tail_End
+    100038: TailBottom
+    100040: TailBottom_End
+    100042: TailTop
+    100044: TailTop_End
+    400000: //RootNode
+    400002: Fish
+    400004: Head
+    400006: Head_End
+    400008: Jaw
+    400010: Jaw_End
+    400012: Root
+    400014: SideFinLeft
+    400016: SideFinLeft1
+    400018: SideFinLeft2
+    400020: SideFinLeft_End
+    400022: SideFinRight
+    400024: SideFinRight1
+    400026: SideFinRight2
+    400028: SideFinRight_End
+    400030: Spine1
+    400032: Spine2
+    400034: Tail
+    400036: Tail_End
+    400038: TailBottom
+    400040: TailBottom_End
+    400042: TailTop
+    400044: TailTop_End
+    2100000: Mat_BlueTang
+    4300000: Fish
+    7400000: Swim
+    9500000: //RootNode
+    13700000: Fish
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Swim
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 10
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.099999994
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
