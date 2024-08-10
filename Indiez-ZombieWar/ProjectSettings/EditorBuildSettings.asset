@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/___IndiezZombieWar/_backup.unity
+    guid: 8380ba071c8a296408539a5071e0ccc7
   m_configObjects: {}

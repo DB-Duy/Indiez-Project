@@ -13,6 +13,12 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
+  - first: {fileID: 4800000, guid: 1a6ceac7f4c639b4096c21f11e4e7a56, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: d52a38c4e70daf4449eaab298ba27ce6, type: 3}
+    second:
+      variants: []
   - first: {fileID: 4800000, guid: ccf72a82cef31a54f9081d23b796f043, type: 3}
     second:
       variants:
@@ -27,9 +33,3 @@ ShaderVariantCollection:
       variants:
       - keywords: _ALPHATEST_ON
         passType: 0
-  - first: {fileID: 4800000, guid: 1a6ceac7f4c639b4096c21f11e4e7a56, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: d52a38c4e70daf4449eaab298ba27ce6, type: 3}
-    second:
-      variants: []

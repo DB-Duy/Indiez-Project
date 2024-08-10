@@ -29,31 +29,52 @@ public class ZombieInstance : MonoBehaviour
     public SkinnedMeshRenderer _renderer;
     private Material _mat;
     [HideInInspector]
-    public AnimationClip PlayingClip;
+    public AnimationClip PlayingClip, RunningClip;
     [HideInInspector]
     public ZombieSpawner Spawner;
     [HideInInspector]
     public string prototypeName;
+    [HideInInspector]
+    public float currentAnimSpeed, currentAgentSpeed;
+    [SerializeField, HideInInspector]
+    private Collider _collider;
+    public void SetCollider(bool active)
+    {
+        _collider.enabled = active;
+    }
     private void OnValidate()
     {
         agent = GetComponent<NavMeshAgent>();
         crowdPrefab = GetComponent<GPUICrowdPrefab>();
         _renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        _collider = GetComponent<Collider>();
     }
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         crowdPrefab = GetComponent<GPUICrowdPrefab>();
         _mat = _renderer.material;
+        animTimes[0] = 0;
+        animTimes[1] = 0;
     }
-    private float startTime = -1;
+    private Vector4 weights = new Vector4(0, 1, 0, 0);
+    private float[] animTimes = new float[2];
     public void PlayAnimation(AnimationClip anim, float startTime = 0f, float speed = 1f)
     {
+        if (PlayingClip != null)
+        {
+            animTimes[1] = crowdPrefab.GetAnimationTime(PlayingClip);
+            crowdPrefab.StartBlend(weights, PlayingClip, anim, transitionTime: 0.2f, animationTimes: animTimes);
+        }
+        else
+        {
+            crowdPrefab.StartAnimation(anim, startTime: startTime, speed: speed * 0.7f);
+        }
         PlayingClip = anim;
-        crowdPrefab.StartAnimation(anim, startTime: startTime, speed: speed * 0.7f);
+        currentAnimSpeed = speed;
     }
 
-    public void ZombieFall(Vector3 ragdollForce = new Vector3())
+    public void ZombieFall(Vector3 ragdollForce = new Vector3(), float animTime = -1)
     {
         var ragdoll = ZombieInstancingManager.Instance.GetAvailableRagdoll(prototypeName);
         ragdoll.transform.SetPositionAndRotation(transform.position, transform.rotation);
@@ -64,10 +85,11 @@ public class ZombieInstance : MonoBehaviour
             ragdoll.ApplyForce(ragdollForce);
         }
         RagdollInstance = ragdoll;
-        PlayingClip.SampleAnimation(ragdoll.gameObject, crowdPrefab.GetAnimationTime(PlayingClip));
+        PlayingClip.SampleAnimation(ragdoll.gameObject, animTime >= 0 ? animTime : crowdPrefab.GetAnimationTime(PlayingClip));
         ragdoll.transform.SetPositionAndRotation(transform.position, transform.rotation);
         ZombieDead();
     }
+
     public void ZombieDead()
     {
         gameObject.SetActive(false);

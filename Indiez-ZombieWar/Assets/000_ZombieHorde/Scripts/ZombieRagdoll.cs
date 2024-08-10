@@ -9,7 +9,7 @@ public enum RagdollDeathBehavior
 {
     Dissolve = 0,
     BakeOnHitGround = 1,
-    BakeOnTimer = 2
+    BakeOnTimer = 2,
 }
 public class ZombieRagdoll : MonoBehaviour
 {
@@ -44,10 +44,8 @@ public class ZombieRagdoll : MonoBehaviour
     {
         if (!_bakeMinTimePassed) { return false; }
         if (_hasTimedOut) { return true; }
-        else
-        {
-            return IsStationary();
-        }
+
+        return IsStationary();
     }
 
     private bool IsStationary()
@@ -91,6 +89,7 @@ public class ZombieRagdoll : MonoBehaviour
                 col.Ragdoll = this;
             }
         }
+        ResetRagdoll();
     }
     public void OnLeaveGround()
     {
@@ -101,17 +100,10 @@ public class ZombieRagdoll : MonoBehaviour
         _groundContactCount++;
         if (_groundContactCount >= 5)
         {
-            if (OnDeath == RagdollDeathBehavior.BakeOnHitGround)
-            {
-                MarkRagdollForBake();
-            }
-            else if (OnDeath == RagdollDeathBehavior.Dissolve)
-            {
-                DissolveRagdoll();
-            }
-
+            DisposeRagdoll();
         }
     }
+
 
     private void DissolveRagdoll()
     {
@@ -156,8 +148,9 @@ public class ZombieRagdoll : MonoBehaviour
         if (delayCalls == null)
         {
             delayCalls = DOTween.Sequence()
-                .Append(DOVirtual.DelayedCall(RagdollTimeout, () => _hasTimedOut = true))
-                .Join(DOVirtual.DelayedCall(MinTimeForBake, () => _bakeMinTimePassed = true))
+                .Append(DOVirtual.DelayedCall(MinTimeForBake, () => _bakeMinTimePassed = true))
+                .Join(DOVirtual.DelayedCall(RagdollTimeout, DisposeRagdoll))
+                .AppendCallback(DisposeRagdoll)
                 .SetAutoKill(false)
                 .SetRecyclable(true);
         }
@@ -170,6 +163,20 @@ public class ZombieRagdoll : MonoBehaviour
             PlayHighlight();
         }
     }
+
+    private void DisposeRagdoll()
+    {
+        _hasTimedOut = true;
+        if (OnDeath == RagdollDeathBehavior.BakeOnHitGround)
+        {
+            MarkRagdollForBake();
+        }
+        else if (OnDeath == RagdollDeathBehavior.Dissolve)
+        {
+            DissolveRagdoll();
+        }
+    }
+
     private void PlayHighlight()
     {
         if (_mat == null)

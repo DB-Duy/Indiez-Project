@@ -26,15 +26,23 @@ public class ZombieSpawner : MonoBehaviour
     protected float spawnInterval;
     protected float timeSinceLastSpawn;
     public bool IsSpawning;
+    [SerializeField, HideInInspector]
+    private bool showGizmo = false;
+    public bool SpawnOnStart;
 
     protected void OnValidate()
     {
         _spawnArea = GetComponent<BoxCollider>();
         _crowdManager = FindObjectOfType<GPUICrowdManager>();
     }
-
+    [ContextMenu("Toggle Gizmo")]
+    private void ToggleGizmo()
+    {
+        showGizmo = !showGizmo;
+    }
     private void OnDrawGizmos()
     {
+        if (!showGizmo) { return; }
         Gizmos.DrawSphere(_target.transform.position, _targetRadius);
     }
     protected Vector3 GetRandomNavMeshPositionNearLocation(Vector3 origin, float range)
@@ -62,7 +70,7 @@ public class ZombieSpawner : MonoBehaviour
                 SpawnPrefabs[i] = _crowdManager.prototypeList[i].prefabObject;
             }
         }
-        IsSpawning = true;
+        IsSpawning = SpawnOnStart;
     }
     protected void Update()
     {
@@ -75,12 +83,23 @@ public class ZombieSpawner : MonoBehaviour
             timeSinceLastSpawn -= spawnInterval;
         }
     }
-
+    public void SpawnAmount(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            SpawnObject();
+        }
+    }
     protected virtual void SpawnObject()
     {
         Vector3 randomPosition = GetRandomPointInBounds(_spawnArea.bounds);
         if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
         {
+            if (!hit.hit)
+            {
+                SpawnObject();
+                return;
+            }
             ZombieInstance instance;
 
             GameObject prototype = null;
@@ -104,13 +123,19 @@ public class ZombieSpawner : MonoBehaviour
             instance.agent.enabled = true;
 
             instance.RagdollParent = ZombieInstancingManager.Instance.GetRagdollParent(instance.gameObject.name);
-            float moveSpeed = Random.Range(ZombieMoveSpeed.x * 100, ZombieMoveSpeed.y * 100) * 0.01f;
+            float moveSpeed = Random.Range(ZombieMoveSpeed.x * 100, ZombieMoveSpeed.y * 100) * 0.01f * 2;
             float animSpeed = Random.Range(ZombieAnimSpeed.x * 100, ZombieAnimSpeed.y * 100) * 0.01f;
             var animator = instance.GetComponent<Animator>().runtimeAnimatorController;
             var clip = CustomClips.Length == 0 ? animator.animationClips[Random.Range(0, animator.animationClips.Length)] : CustomClips[Random.Range(0, CustomClips.Length)];
             instance.PlayAnimation(clip, Random.value, animSpeed);
-            instance.agent.speed = moveSpeed * 2;
-            instance.agent.SetDestination(GetRandomNavMeshPositionNearLocation(_target.position, _targetRadius));
+            instance.RunningClip = clip;
+            instance.agent.speed = moveSpeed;
+            instance.currentAnimSpeed = animSpeed;
+            instance.currentAgentSpeed = moveSpeed;
+            if (_target != null)
+            {
+                instance.agent.SetDestination(GetRandomNavMeshPositionNearLocation(_target.position, _targetRadius));
+            }
         }
     }
 

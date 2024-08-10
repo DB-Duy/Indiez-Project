@@ -16,7 +16,7 @@ public class CharacterLocomotion : MonoBehaviour
     [Tooltip("Turn this off if you want to separate movement and aiming")]
     [SerializeField] bool lookToMovementDirection = true;//turn this off if you want to separate movement and aiming
     [Tooltip("Feel free to assign other joysticks here")]
-    [SerializeField] FixedJoystick moveJoystick;//assign joystick here
+    [SerializeField] Joystick moveJoystick;//assign joystick here
     [Tooltip("Self explanatory. After this magnitude player will move ")]
     [SerializeField] float movementThreshold = 0.1f;// self explanatory. After this magnitude player will move 
     [Header("Animation variables")]
@@ -32,8 +32,11 @@ public class CharacterLocomotion : MonoBehaviour
     Vector3 input, move;//input for animations
     Vector3 cameraForward;
     float forward, strafe;//we will use them in animation variables
+    private Camera cam;
+    private Vector3 camPos;
     void Awake()
     {
+        cam = Camera.main;
         if (characterController == null)
         {
             characterController = GetComponent<CharacterController>();
@@ -48,7 +51,8 @@ public class CharacterLocomotion : MonoBehaviour
     void Start()
     {
         characterController.detectCollisions = false; //we don't want character controller to detect collisions
-        RecalculateCamera(Camera.main);//we should know where camera is looking at. Call this method each time camera angle changes
+        RecalculateCamera();//we should know where camera is looking at. Call this method each time camera angle changes
+        camPos = cam.transform.position;
         //also consider caching the camera
     }
     void Update()
@@ -63,6 +67,12 @@ public class CharacterLocomotion : MonoBehaviour
         //getting the magnitude
         if (mag >= movementThreshold)
         {
+            var camPosition = cam.transform.position;
+            if (camPosition != camPos)
+            {
+                RecalculateCamera();
+                camPos = camPosition;
+            }
             MovementAndRotation();
         }
         else
@@ -110,9 +120,8 @@ public class CharacterLocomotion : MonoBehaviour
         animator.SetFloat(forwardAnimationVar, forward * 2f, 0.01f, Time.deltaTime);//setting animator floats
         animator.SetFloat(strafeAnimationVar, strafe * 2f, 0.01f, Time.deltaTime);
     }
-    void RecalculateCamera(Camera _cam)
+    void RecalculateCamera()
     {
-        Camera cam = _cam;
         camTransform = cam.transform;
         fwd = cam.transform.forward; //camera forward
         fwd.y = 0;
@@ -122,8 +131,8 @@ public class CharacterLocomotion : MonoBehaviour
     void MovementAndRotation()
     {
         Vector3 direction = new Vector3(moveJoystick.Horizontal, 0, moveJoystick.Vertical);//joystick direction
-        Vector3 rightMovement = right * walkSpeed * Time.deltaTime * moveJoystick.Horizontal;//getting right movement out of joystick(relative to camera)
-        Vector3 upMovement = fwd * walkSpeed * Time.deltaTime * moveJoystick.Vertical; //getting up movement out of joystick(relative to camera)
+        Vector3 rightMovement = moveJoystick.Horizontal * Time.deltaTime * walkSpeed * right;//getting right movement out of joystick(relative to camera)
+        Vector3 upMovement = moveJoystick.Vertical * Time.deltaTime * walkSpeed * fwd; //getting up movement out of joystick(relative to camera)
         Vector3 heading = Vector3.Normalize(rightMovement + upMovement); //final movement vector
         heading.y = -9.8f;//gravity while moving
         characterController.Move(heading * walkSpeed * Time.deltaTime);//move

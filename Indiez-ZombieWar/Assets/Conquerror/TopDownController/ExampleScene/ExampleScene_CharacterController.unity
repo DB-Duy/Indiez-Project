@@ -1386,7 +1386,7 @@ MonoBehaviour:
   lookToMovementDirection: 1
   moveJoystick: {fileID: 1553079576}
   movementThreshold: 0.1
-  canStrafe: 1
+  canStrafe: 0
   forwardAnimationVar: Forward
   strafeAnimationVar: Strafe
 --- !u!4 &1873137998

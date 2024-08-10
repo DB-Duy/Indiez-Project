@@ -11,6 +11,7 @@ public class RaycastKillZombie : MonoBehaviour
     public LayerMask _zombieMask;
     public Vector3 ragdollForceDirection;
     public float ragdollForcePower;
+    public bool ZombieDieByAnim = true;
 
     private void Update()
     {
