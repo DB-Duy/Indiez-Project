@@ -17,7 +17,22 @@ public class ActionManager : MonoBehaviour
     public event Action<Gun> OnEquipGun;
     public event Action<Transform, int> OnPlayerReceiveDamage;
     public event Action OnPlayerDead;
+    public event Action<ZombieHP> OnZombieKilled;
+    public event Action<Pickup> OnPlayerPickUpAmmo;
+    public event Action<Pickup> OnPlayerPickUpHealth;
 
+    public void ZombieKilled(ZombieHP zomb)
+    {
+        OnZombieKilled?.Invoke(zomb);
+    }
+    public void PlayerPickUpAmmo(Pickup pickup)
+    {
+        OnPlayerPickUpAmmo?.Invoke(pickup);
+    }
+    public void PlayerPickUpHealth(Pickup pickup)
+    {
+        OnPlayerPickUpHealth?.Invoke(pickup);
+    }
     public void EquipGun(Gun gun)
     {
         OnEquipGun?.Invoke(gun);

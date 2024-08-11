@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class PlayerHPManager : MonoBehaviour
     private SkinnedMeshRenderer _skinnedMeshRenderer;
     private Tween _highLightTween;
     private Material _mat;
+    public int HPPickupValue = 10;
     private void OnValidate()
     {
         _actionManager = FindObjectOfType<ActionManager>();
@@ -31,6 +33,18 @@ public class PlayerHPManager : MonoBehaviour
                 .SetAutoKill(false)
                 .SetRecyclable(true)
                 .Pause();
+    }
+    private void HealPlayer(Pickup pickup)
+    {
+        if (HP + HPPickupValue > maxHP)
+        {
+            HP = maxHP;
+        }
+        else
+        {
+            HP += HPPickupValue;
+        }
+        _bar.fillAmount = (float)HP / maxHP;
     }
     private void OnDestroy()
     {
@@ -49,5 +63,11 @@ public class PlayerHPManager : MonoBehaviour
         {
             _actionManager.PlayerDead();
         }
+    }
+
+    public void PlayerPickUpHealth(Pickup pickup)
+    {
+        HealPlayer(pickup);
+        _actionManager.PlayerPickUpHealth(pickup);
     }
 }

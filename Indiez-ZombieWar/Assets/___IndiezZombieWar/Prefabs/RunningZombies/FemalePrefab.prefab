@@ -1420,7 +1420,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 180
-  m_StoppingDistance: 2
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 0
@@ -1494,8 +1494,8 @@ MonoBehaviour:
   _attackClips:
   - {fileID: 7400000, guid: 270bb59c49fb8ac4c9136289dfb8f36f, type: 2}
   - {fileID: 7400000, guid: c7df813988691d54f8c66c7fb2a729c7, type: 2}
-  attackRange: 1
-  attackDamage: 1
+  attackRange: 1.5
+  attackDamage: 5
   _actionManager: {fileID: 0}
   isAttacking: 0
   _zombHP: {fileID: 8305842994508865893}
@@ -1525,8 +1525,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ddfa350b0eeee0469b339d5da028c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 5
-  maxHP: 5
+  HP: 4
+  maxHP: 4
   _crowdPrefab: {fileID: 1022253432558758940}
   _zombieInstance: {fileID: 7093892632640713434}
   _deathClips:
@@ -1548,6 +1548,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: dfe84dd9f752b2c4584c2eec80d68ce6, type: 2}
   _zombAttack: {fileID: 4630054504244483215}
   _actionManager: {fileID: 0}
+  isStagger: 0
 --- !u!114 &5685542738822049384
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -63,8 +63,9 @@ public class ZombieInstance : MonoBehaviour
     {
         if (PlayingClip != null)
         {
-            animTimes[1] = crowdPrefab.GetAnimationTime(PlayingClip);
-            crowdPrefab.StartBlend(weights, PlayingClip, anim, transitionTime: 0.2f, animationTimes: animTimes);
+            animTimes[0] = crowdPrefab.GetAnimationTime(PlayingClip);
+            animTimes[1] = startTime;
+            crowdPrefab.StartBlend(weights, PlayingClip, anim, transitionTime: 0.1f, animationTimes: animTimes);
         }
         else
         {

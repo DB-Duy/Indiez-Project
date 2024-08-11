@@ -37,7 +37,7 @@ public class ZombieAttack : MonoBehaviour
             .AppendCallback(() => isAttacking = true)
             .AppendInterval(0.75f)
             .AppendCallback(CheckDealDamage)
-            .AppendInterval(0.3f)
+            .AppendInterval(0.8f)
             .OnComplete(() => isAttacking = false)
             .SetAutoKill(false)
             .SetRecyclable(true)
@@ -45,8 +45,8 @@ public class ZombieAttack : MonoBehaviour
     }
     private void OnEnable()
     {
-        InvokeRepeating(nameof(CheckAttackRange), 1, 0.2f);
-        InvokeRepeating(nameof(UpdateAgentTarget), 1, 0.2f);
+        InvokeRepeating(nameof(UpdateAgentTarget), 0, 0.25f);
+        InvokeRepeating(nameof(CheckAttackRange), 1, 0.25f);
     }
     private void OnDisable()
     {

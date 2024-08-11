@@ -59,7 +59,7 @@ public class ZombieHP : MonoBehaviour
         _zombieInstance = GetComponent<ZombieInstance>();
         _zombAttack = GetComponent<ZombieAttack>();
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 rotateTowardsDamageSource = new Vector3())
     {
         HP -= damage;
         if (HP <= 0)
@@ -68,7 +68,12 @@ public class ZombieHP : MonoBehaviour
             _deathClip = _deathClips[Random.Range(0, _deathClips.Length)];
             _zombieInstance.PlayAnimation(_deathClip, speed: 1.5f);
             _zombieInstance.agent.speed = 0;
+            if (rotateTowardsDamageSource != Vector3.zero)
+            {
+                transform.LookAt(rotateTowardsDamageSource, Vector3.up);
+            }
             _deathTween.Restart();
+            _actionManager.ZombieKilled(this);
         }
         else
         {

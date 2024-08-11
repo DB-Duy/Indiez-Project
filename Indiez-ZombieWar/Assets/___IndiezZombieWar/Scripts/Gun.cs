@@ -1,8 +1,10 @@
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UI;
 
 public enum GunType
 {
@@ -14,54 +16,84 @@ public class Gun : MonoBehaviour
 {
     public GunType GunType;
     public int ammoAvailable;
-    public int magazineSize = 30;
+    public int maxMagazineSize = 30;
     public int currentMagazineSize;
     public float fireRate;
+    public float GunRange;
+    public int Damage;
     [SerializeField]
     public bool IsShooting;
     [SerializeField]
-    private ShootingBulletFX _bulletFX;
-    private float lastShotTime = -1;
+    protected ShootingBulletFX _bulletFX;
+    protected float lastShotTime = -1;
     [SerializeField, HideInInspector]
-    private ActionManager _actionManager;
+    protected ActionManager _actionManager;
     [SerializeField]
-    private Animator _gunAnimator;
-    private int _shootId;
-    private Transform _currentTarget;
+    protected Animator _gunAnimator;
+    protected static int _shootId;
+    protected Transform _currentTarget;
+    [SerializeField]
+    public Transform MuzzlePoint;
+    [SerializeField]
+    public ParticleSystem MuzzleFlash;
+    [SerializeField]
+    public Sprite gunSprite;
+    public bool IsReloading = false;
+
     private void OnValidate()
     {
-        _bulletFX = GetComponent<ShootingBulletFX>();
+        _bulletFX = FindObjectOfType<ShootingBulletFX>();
         _actionManager = FindObjectOfType<ActionManager>();
         _gunAnimator = GetComponent<Animator>();
     }
-    private void Awake()
+    private void OnEnable()
     {
-        _actionManager.OnShootButtonPressed += TryShoot;
-        _actionManager.OnReloadComplete += ReloadComplete;
+        _actionManager.OnShootButtonPressed += StartShoot;
         _actionManager.OnShootButtonReleased += StopShoot;
         _actionManager.OnTargetAcquired += GetTarget;
+
+        _bulletFX.MuzzlePos = MuzzlePoint;
+        _bulletFX.MuzzleFlash = MuzzleFlash;
     }
     private void GetTarget(Transform target)
     {
         _currentTarget = target;
     }
-    private void Start()
+    protected virtual void Start()
     {
         _shootId = Animator.StringToHash("Shoot");
+
+        currentMagazineSize = maxMagazineSize;
     }
-    private void OnDestroy()
+    private void OnDisable()
     {
-        _actionManager.OnShootButtonPressed -= TryShoot;
-        _actionManager.OnReloadComplete -= ReloadComplete;
+        _actionManager.OnShootButtonPressed -= StartShoot;
         _actionManager.OnShootButtonReleased -= StopShoot;
         _actionManager.OnTargetAcquired -= GetTarget;
     }
     public void TryShoot()
     {
+        if (IsReloading) { return; }
         if (currentMagazineSize > 0)
         {
-            IsShooting = true;
+            ShootGun();
         }
+        else
+        {
+            TryReload();
+        }
+    }
+    public void TryReload()
+    {
+        if (ammoAvailable > 0 && currentMagazineSize < maxMagazineSize)
+        {
+            IsReloading = true;
+            _actionManager.PerformReload();
+        }
+    }
+    public void StartShoot()
+    {
+        IsShooting = true;
     }
     public void StopShoot()
     {
@@ -72,26 +104,37 @@ public class Gun : MonoBehaviour
         if (!IsShooting) { return; }
         if (Time.time - lastShotTime > fireRate)
         {
-            ShootGun();
-            lastShotTime = Time.time;
+            TryShoot();
         }
     }
-    private void ShootGun()
+    protected virtual void ShootGun()
     {
-        _actionManager.PerformShoot();
+        currentMagazineSize--;
         _gunAnimator.SetTrigger(_shootId);
         _bulletFX.PlayShootFX();
         DealDamage();
+        _actionManager.PerformShoot();
+        lastShotTime = Time.time;
     }
 
-    private void DealDamage()
+    protected virtual void DealDamage()
     {
         if (_currentTarget == null) { return; }
-        _currentTarget.GetComponent<ZombieHP>().TakeDamage(1);
+
+        _currentTarget.GetComponent<ZombieHP>().TakeDamage(Damage);
+        _bulletFX.PlayBloodFxCurrentTarget();
     }
 
-    private void ReloadComplete()
+    public void ReloadComplete()
     {
+        IsReloading = false;
+        int bulletsNeeded = maxMagazineSize - currentMagazineSize;
 
+        int bulletsToLoad = Mathf.Min(bulletsNeeded, ammoAvailable);
+
+        currentMagazineSize += bulletsToLoad;
+
+        ammoAvailable -= bulletsToLoad;
+        _actionManager.ReloadComplete();
     }
 }

@@ -4921,7 +4921,7 @@ GameObject:
   - component: {fileID: 6243536042129377605}
   - component: {fileID: 7733580240202130693}
   - component: {fileID: 7968507625656065409}
-  - component: {fileID: 219384306392967156}
+  - component: {fileID: 6827023442500899572}
   m_Layer: 0
   m_Name: ZomHitFX
   m_TagString: Untagged
@@ -5150,7 +5150,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 0.6
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 1
   cullingMode: 1
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -9942,7 +9942,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!114 &219384306392967156
+--- !u!114 &6827023442500899572
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9951,10 +9951,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4631849678681322265}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a895231490da6545890b1e1794f8704, type: 3}
+  m_Script: {fileID: 11500000, guid: 5cdbe1c299b3365498603123a9996561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deathtimer: 5
+  _particleSystem: {fileID: 7968507625656065409}
 --- !u!1 &4771336755190455536
 GameObject:
   m_ObjectHideFlags: 0
