@@ -1,11 +1,9 @@
 using DG.Tweening;
 using GPUInstancer.CrowdAnimations;
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -59,13 +57,16 @@ public class ZombieInstance : MonoBehaviour
     }
     private Vector4 weights = new Vector4(0, 1, 0, 0);
     private float[] animTimes = new float[2];
+    private float[] animSpeed = new float[2];
     public void PlayAnimation(AnimationClip anim, float startTime = 0f, float speed = 1f)
     {
         if (PlayingClip != null)
         {
             animTimes[0] = crowdPrefab.GetAnimationTime(PlayingClip);
             animTimes[1] = startTime;
-            crowdPrefab.StartBlend(weights, PlayingClip, anim, transitionTime: 0.1f, animationTimes: animTimes);
+            animSpeed[0] = currentAnimSpeed;
+            animSpeed[1] = speed;
+            crowdPrefab.StartBlend(weights, PlayingClip, anim, transitionTime: 0.1f, animationTimes: animTimes, animationSpeeds: animSpeed);
         }
         else
         {
@@ -94,5 +95,6 @@ public class ZombieInstance : MonoBehaviour
     public void ZombieDead()
     {
         gameObject.SetActive(false);
+        Spawner.RemoveActiveZombie(this);
     }
 }

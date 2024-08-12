@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField]
-    public Gun[] AvailableGuns;
+    public List<Gun> AvailableGuns = new List<Gun>();
     private int currentGunIdx;
     public Gun currentGun;
     [SerializeField, HideInInspector]
@@ -22,7 +22,7 @@ public class PlayerInventory : MonoBehaviour
     }
     private void AddAmmoToGuns(Pickup pickup)
     {
-        for (int i = 0; i < AvailableGuns.Length; i++)
+        for (int i = 0; i < AvailableGuns.Count; i++)
         {
             AvailableGuns[i].ammoAvailable += AvailableGuns[i].maxMagazineSize;
         }
@@ -42,7 +42,7 @@ public class PlayerInventory : MonoBehaviour
     }
     public void SetActiveGunAnimEvent()
     {
-        for (int i = 0; i < AvailableGuns.Length; i++)
+        for (int i = 0; i < AvailableGuns.Count; i++)
         {
             if (currentGun == AvailableGuns[i])
             {
@@ -65,12 +65,12 @@ public class PlayerInventory : MonoBehaviour
     public void EquipNextGun()
     {
         currentGunIdx++;
-        _actionManager.EquipGun(AvailableGuns[currentGunIdx % AvailableGuns.Length]);
+        _actionManager.EquipGun(AvailableGuns[currentGunIdx % AvailableGuns.Count]);
     }
     public int GetTotalAmmo()
     {
         int totalAmmo = 0;
-        for (int i = 0; i < AvailableGuns.Length; i++)
+        for (int i = 0; i < AvailableGuns.Count; i++)
         {
             totalAmmo += AvailableGuns[i].ammoAvailable;
         }

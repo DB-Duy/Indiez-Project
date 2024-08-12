@@ -21,6 +21,11 @@ public class ActionManager : MonoBehaviour
     public event Action<Pickup> OnPlayerPickUpAmmo;
     public event Action<Pickup> OnPlayerPickUpHealth;
 
+    private void Awake()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+    }
     public void ZombieKilled(ZombieHP zomb)
     {
         OnZombieKilled?.Invoke(zomb);

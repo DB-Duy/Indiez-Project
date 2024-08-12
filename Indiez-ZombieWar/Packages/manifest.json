@@ -8,6 +8,7 @@
     "com.unity.collab-proxy": "2.4.4",
     "com.unity.device-simulator.devices": "1.0.0",
     "com.unity.feature.development": "1.0.1",
+    "com.unity.mobile.android-logcat": "1.4.2",
     "com.unity.postprocessing": "3.4.0",
     "com.unity.render-pipelines.universal": "14.0.10",
     "com.unity.textmeshpro": "3.0.6",

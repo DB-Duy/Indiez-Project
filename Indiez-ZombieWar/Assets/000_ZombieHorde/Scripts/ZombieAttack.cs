@@ -72,7 +72,7 @@ public class ZombieAttack : MonoBehaviour
         if (_zombInstance.agent.remainingDistance < attackRange)
         {
             _zombInstance.agent.speed = 0.1f;
-            _zombInstance.PlayAnimation(_attackClips[Random.Range(0, _attackClips.Length)], 0, 2.5f);
+            _zombInstance.PlayAnimation(_attackClips[Random.Range(0, _attackClips.Length)], 0, 2f);
             DealDamageTween.Restart();
         }
         else if (_zombInstance.agent.speed != _zombInstance.currentAgentSpeed)

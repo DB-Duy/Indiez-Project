@@ -1,4 +1,5 @@
 using DG.Tweening;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,26 +10,38 @@ using UnityEngine.UIElements;
 public class StageManager : MonoBehaviour
 {
     [SerializeField]
+    private Transform _poolParent;
+    [Header("Spawn Settings")]
+    [SerializeField]
     public ZombieSpawner[] _spawnAreas;
     [SerializeField]
     private WeaponCache[] _weaponCaches;
     private int _cachesFound = 0;
-    public bool IsEventOccuring = false;
+    public float BaseZombCountPerSpawn = 1;
+    private WaitForSeconds SpawnOffsetWait = new WaitForSeconds(1.5f);
+    private WaitForSeconds Wait1Second = new WaitForSeconds(1);
+    private Coroutine _spawnZombiesCoroutine;
+    public int MaxZombieCountPerSpawner = 30;
+
+    [Header("Pickup Settings")]
     [SerializeField]
-    private Transform _poolParent;
+    private Pickup _hpPickupPrefab;
     [SerializeField]
-    private Pickup _hpPickupPrefab, _bulletPickupPrefab;
+    private Pickup _bulletPickupPrefab;
+    [HideInInspector]
+    private int hpPickupCount = 0, ammoPickupCount = 0;
     [SerializeField, HideInInspector]
     private ActionManager _actionManager;
     public IObjectPool<Pickup> _hpPickupPool;
     public IObjectPool<Pickup> _bulletPickupPool;
-    public int hpPickupCount = 0;
-    public int ammoPickupCount = 0;
     [SerializeField, HideInInspector]
     private PlayerHPManager _playerHPManager;
     [SerializeField, HideInInspector]
     private PlayerInventory _playerInventory;
     public float hpThreshold, minAmmoThreshold, maxAmmoThreshold;
+
+    public event Action OnActivateWeaponCacheEvent;
+    public event Action OnCompleteWeaponCacheEvent;
 
     private void OnValidate()
     {
@@ -36,6 +49,7 @@ public class StageManager : MonoBehaviour
         _actionManager = FindObjectOfType<ActionManager>();
         _playerHPManager = FindObjectOfType<PlayerHPManager>();
         _playerInventory = FindObjectOfType<PlayerInventory>();
+        _boss = FindObjectOfType<BossHP>(true);
     }
     private void Awake()
     {
@@ -52,13 +66,44 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        _spawnAreas[0].SpawnAmount(5);
+        ZombieSpawner.MaxZombieCount = MaxZombieCountPerSpawner;
+        _spawnZombiesCoroutine = StartCoroutine(SpawnZombieCoroutine());
         _hpPickupPool = new ObjectPool<Pickup>(OnCreateHPPickup, GetPickup, ReleasePickup, defaultCapacity: 10, maxSize: 20);
         _bulletPickupPool = new ObjectPool<Pickup>(OnCreateBulletPickup, GetPickup, ReleasePickup, defaultCapacity: 10, maxSize: 20);
     }
+    int secondsTillMaxDifficulty = 600;
+    int secondsElapsed = 0;
+    float maxZomCountPerSpawn = 5;
+    float zombCountPerSpawn = 0.2f;
+    float zombSpeedIncrement = 1f / 600f;
+    bool IsSpawningZombies = true;
+    private IEnumerator SpawnZombieCoroutine()
+    {
+        while (IsSpawningZombies)
+        {
+            yield return Wait1Second;
+            zombCountPerSpawn = BaseZombCountPerSpawn + Mathf.Lerp(0, maxZomCountPerSpawn, (float)secondsElapsed / secondsTillMaxDifficulty);
+            _spawnAreas[secondsElapsed % _spawnAreas.Length].SpawnAmount(zombCountPerSpawn);
+            secondsElapsed++;
+            UpdateSpawnerSettings();
+        }
+    }
+    public void StopAllZombiesActivity()
+    {
+        IsSpawningZombies = false;
+
+    }
+    private void UpdateSpawnerSettings()
+    {
+        for (int i = 0; i < _spawnAreas.Length; i++)
+        {
+            _spawnAreas[i].ZombieAnimSpeed += Vector2.one * zombSpeedIncrement;
+            _spawnAreas[i].ZombieMoveSpeed += Vector2.one * zombSpeedIncrement;
+        }
+    }
     public void TrySpawnPickupOnZombieKilled(ZombieHP zombHp)
     {
-        if (_playerHPManager.HP < hpThreshold)
+        if (_playerHPManager.HP < hpThreshold && hpPickupCount < 10)
         {
             float chance = (_playerHPManager.maxHP - _playerHPManager.HP) / (float)_playerHPManager.maxHP;
             if (UnityEngine.Random.value < chance)
@@ -67,7 +112,7 @@ public class StageManager : MonoBehaviour
             }
         }
         int playerAmmo = _playerInventory.GetTotalAmmo();
-        if (playerAmmo < minAmmoThreshold)
+        if (playerAmmo < minAmmoThreshold && ammoPickupCount < 10)
         {
             float chance = (maxAmmoThreshold - playerAmmo) / maxAmmoThreshold;
             if (UnityEngine.Random.value < chance)
@@ -129,7 +174,14 @@ public class StageManager : MonoBehaviour
     private void GetPickup(Pickup pickup)
     {
         pickup.Collider.enabled = false;
-        hpPickupCount++;
+        if (pickup.pickupType == PickupType.Bullet)
+        {
+            ammoPickupCount++;
+        }
+        else
+        {
+            hpPickupCount++;
+        }
     }
     private void ReleasePickup(Pickup pickup)
     {
@@ -144,14 +196,60 @@ public class StageManager : MonoBehaviour
             hpPickupCount--;
         }
     }
+
+    [Header("Event settings")]
+    public int EventsCompleted = 0;
+    public Gun[] _gunsToUnlock;
+    public bool IsEventOccuring = false;
+    private Coroutine _eventTimerCoroutine;
+    public float EventDuration = 50f;
+    private float _eventTimeElapsed = 0;
+    private WeaponCache _currentEventWeaponCache;
+    [SerializeField]
+    private BossHP _boss;
     public bool CanActivateEvent()
     {
         return !IsEventOccuring;
     }
     public void ActivateEvent(WeaponCache weaponCache)
     {
+        _currentEventWeaponCache = weaponCache;
         IsEventOccuring = true;
+        OnActivateWeaponCacheEvent?.Invoke();
+        if (EventsCompleted == 2)
+        {
+            StartBossBattle();
+            return;
+        }
 
+        _currentEventWeaponCache.ActivateWeaponCacheEvent();
+        BaseZombCountPerSpawn = EventsCompleted * 0.5f;
+        _eventTimeElapsed = 0;
+        _eventTimerCoroutine = StartCoroutine(EventTimerCoroutine());
+    }
+    [ContextMenu("start boss")]
+    private void StartBossBattle()
+    {
+        _boss.gameObject.SetActive(true);
+        _boss.transform.DOMoveY(13.5f, 1f).OnComplete(() => _boss.ActivateBoss());
+    }
+
+    private IEnumerator EventTimerCoroutine()
+    {
+        while (_eventTimeElapsed < EventDuration)
+        {
+            yield return Wait1Second;
+            _eventTimeElapsed++;
+        }
+        EventCompleted();
+    }
+    public void EventCompleted()
+    {
+        EventsCompleted++;
+        _currentEventWeaponCache.CompleteWeaponCacheEvent();
+        IsEventOccuring = false;
+        _playerInventory.AvailableGuns.Add(_gunsToUnlock[EventsCompleted - 1]);
+        _currentEventWeaponCache = null;
     }
     private void ReleasePickUpAmmo(Pickup pickup)
     {

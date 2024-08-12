@@ -11,14 +11,13 @@ public class ShotGun : Gun
     [SerializeField]
     private Vector3[] shootTargets;
     private Vector3[] shootDirections;
-    [SerializeField]
-    private LayerMask _zombieLayer;
-
+    private bool[] playDecals;
     protected override void Start()
     {
         base.Start();
         shootTargets = new Vector3[shootDirectionTransforms.Length];
         shootDirections = new Vector3[shootDirectionTransforms.Length];
+        playDecals = new bool[shootDirections.Length];
     }
     private void GetShootDirections()
     {
@@ -41,12 +40,13 @@ public class ShotGun : Gun
             Gizmos.DrawLine(MuzzlePoint.position, shootDirectionTransforms[i].position);
         }
     }
+
     protected override void ShootGun()
     {
         currentMagazineSize--;
         PerformRaycastShotgun();
         _gunAnimator.SetTrigger(_shootId);
-        _bulletFX.PlayShootFXShotgun(shootTargets);
+        _bulletFX.PlayShootFXShotgun(shootTargets, playDecals);
         _actionManager.PerformShoot();
         lastShotTime = Time.time;
     }
@@ -56,13 +56,22 @@ public class ShotGun : Gun
         GetShootDirections();
         for (int i = 0; i < shootDirections.Length; i++)
         {
-            if (Physics.Raycast(MuzzlePoint.position, shootDirections[i], out RaycastHit hitInfo, GunRange, _zombieLayer, QueryTriggerInteraction.Collide))
+            if (Physics.Raycast(MuzzlePoint.position, shootDirections[i], out RaycastHit hitInfo, GunRange, HitLayer, QueryTriggerInteraction.Collide))
             {
                 shootTargets[i] = hitInfo.point;
-                DealDamageShotgun(hitInfo.transform, hitInfo.point);
+                if (hitInfo.transform.CompareTag("Zombie"))
+                {
+                    playDecals[i] = false;
+                    DealDamageShotgun(hitInfo.transform, hitInfo.point);
+                }
+                else
+                {
+                    playDecals[i] = true;
+                }
             }
             else
             {
+                playDecals[i] = false;
                 shootTargets[i] = MuzzlePoint.position + shootDirections[i] * GunRange;
             }
         }
@@ -70,7 +79,11 @@ public class ShotGun : Gun
 
     protected void DealDamageShotgun(Transform target, Vector3 point)
     {
-        target.GetComponent<ZombieHP>().TakeDamage(Damage);
-        _bulletFX.PlayBloodFxAtPoint(point);
+        ZombieHP zomb = target.GetComponent<ZombieHP>();
+        if (zomb != null)
+        {
+            target.GetComponent<ZombieHP>().TakeDamage(Damage);
+            _bulletFX.PlayBloodFxAtPoint(point);
+        }
     }
 }

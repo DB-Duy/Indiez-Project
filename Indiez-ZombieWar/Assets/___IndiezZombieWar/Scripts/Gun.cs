@@ -111,18 +111,32 @@ public class Gun : MonoBehaviour
     {
         currentMagazineSize--;
         _gunAnimator.SetTrigger(_shootId);
-        _bulletFX.PlayShootFX();
-        DealDamage();
+        PerformRaycastAR();
         _actionManager.PerformShoot();
         lastShotTime = Time.time;
     }
 
-    protected virtual void DealDamage()
+    public LayerMask HitLayer;
+    private void PerformRaycastAR()
     {
-        if (_currentTarget == null) { return; }
-
-        _currentTarget.GetComponent<ZombieHP>().TakeDamage(Damage);
-        _bulletFX.PlayBloodFxCurrentTarget();
+        Vector3 direction = _currentTarget == null ? MuzzlePoint.forward : ((_currentTarget.transform.position + new Vector3(0, 1.5f, 0)) - MuzzlePoint.position).normalized;
+        if (Physics.Raycast(MuzzlePoint.position, direction, out RaycastHit hitInfo, GunRange, HitLayer, QueryTriggerInteraction.Collide))
+        {
+            if (hitInfo.collider.CompareTag("Zombie"))
+            {
+                _currentTarget.GetComponent<ZombieHP>().TakeDamage(Damage);
+                _bulletFX.PlayShootFX(hitInfo.point, false);
+                _bulletFX.PlayBloodFxCurrentTarget();
+            }
+            else
+            {
+                _bulletFX.PlayShootFX(hitInfo.point, true);
+            }
+        }
+        else
+        {
+            _bulletFX.PlayShootFX(MuzzlePoint.position + MuzzlePoint.forward * GunRange, false);
+        }
     }
 
     public void ReloadComplete()

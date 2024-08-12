@@ -1336,7 +1336,7 @@ GameObject:
   - component: {fileID: 5685542738822049384}
   m_Layer: 6
   m_Name: FemalePrefab
-  m_TagString: Untagged
+  m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1366,7 +1366,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7120428741347656696}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: 5533307f58acce040bffea93303b51db, type: 3}
   m_Controller: {fileID: 9100000, guid: 0b6dec38855e5c041a2cd20e1e28a079, type: 2}
   m_CullingMode: 2

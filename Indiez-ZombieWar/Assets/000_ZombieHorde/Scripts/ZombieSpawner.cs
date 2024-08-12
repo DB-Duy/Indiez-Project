@@ -10,6 +10,8 @@ using UnityEngine.AI;
 
 public class ZombieSpawner : MonoBehaviour
 {
+    public int ZombieCount;
+    public static int MaxZombieCount;
     [SerializeField]
     protected Transform _target;
     public float _targetRadius = 5;
@@ -29,6 +31,7 @@ public class ZombieSpawner : MonoBehaviour
     [SerializeField, HideInInspector]
     private bool showGizmo = false;
     public bool SpawnOnStart;
+    public List<ZombieInstance> ActiveZombiesList = new List<ZombieInstance>();
 
     protected void OnValidate()
     {
@@ -58,8 +61,6 @@ public class ZombieSpawner : MonoBehaviour
 
     protected void Start()
     {
-        if (SpawnRate <= 0) { return; }
-        spawnInterval = 1f / SpawnRate;
         timeSinceLastSpawn = 0f;
 
         if (SpawnPrefabs.Length == 0)
@@ -70,6 +71,9 @@ public class ZombieSpawner : MonoBehaviour
                 SpawnPrefabs[i] = _crowdManager.prototypeList[i].prefabObject;
             }
         }
+
+        if (SpawnRate <= 0) { return; }
+        spawnInterval = 1f / SpawnRate;
         IsSpawning = SpawnOnStart;
     }
     protected void Update()
@@ -83,11 +87,19 @@ public class ZombieSpawner : MonoBehaviour
             timeSinceLastSpawn -= spawnInterval;
         }
     }
-    public void SpawnAmount(int count)
+    private float toSpawn = 0;
+    public void SpawnAmount(float count)
     {
-        for (int i = 0; i < count; i++)
+        toSpawn += count;
+        if (ZombieCount > ZombieSpawner.MaxZombieCount)
+        {
+            return;
+        }
+        while (toSpawn > 1)
         {
             SpawnObject();
+            ZombieCount++;
+            toSpawn -= 1;
         }
     }
     protected virtual void SpawnObject()
@@ -120,6 +132,7 @@ public class ZombieSpawner : MonoBehaviour
             instance.Spawner = this;
             instance.transform.SetPositionAndRotation(hit.position, Quaternion.identity);
             instance.gameObject.SetActive(true);
+            ActiveZombiesList.Add(instance);
             instance.agent.enabled = true;
 
             instance.RagdollParent = ZombieInstancingManager.Instance.GetRagdollParent(instance.gameObject.name);
@@ -138,7 +151,10 @@ public class ZombieSpawner : MonoBehaviour
             }
         }
     }
-
+    public void RemoveActiveZombie(ZombieInstance zomb)
+    {
+        ActiveZombiesList.Remove(zomb);
+    }
 
     protected Vector3 GetRandomPointInBounds(Bounds bounds)
     {

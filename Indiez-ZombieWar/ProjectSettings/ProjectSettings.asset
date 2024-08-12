@@ -162,7 +162,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.DBDuy.IndieZZombieWar
-    Standalone: com.DefaultCompany.EmptyURP
+    Standalone: com.DBDuy.IndieZ--Zombie-War
   buildNumber:
     Standalone: 0
     VisionOS: 0

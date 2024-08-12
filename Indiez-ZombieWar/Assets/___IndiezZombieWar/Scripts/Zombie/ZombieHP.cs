@@ -18,10 +18,10 @@ public class ZombieHP : MonoBehaviour
     [SerializeField]
     private ZombieAttack _zombAttack;
     [SerializeField, HideInInspector]
-    private ActionManager _actionManager;
+    protected ActionManager _actionManager;
     private AnimationClip _deathClip, _behitClip;
     public bool isStagger = false;
-    private void Awake()
+    protected virtual void Awake()
     {
         _actionManager = FindObjectOfType<ActionManager>();
         _deathTween = DOTween.Sequence()
@@ -39,7 +39,7 @@ public class ZombieHP : MonoBehaviour
             .SetAutoKill(false)
             .Pause();
     }
-    private void ResumeChase()
+    protected virtual void ResumeChase()
     {
         if (HP <= 0)
         {
@@ -49,7 +49,7 @@ public class ZombieHP : MonoBehaviour
         _zombieInstance.agent.isStopped = false;
         isStagger = false;
     }
-    private void DissolveZombie()
+    protected virtual void DissolveZombie()
     {
         _zombieInstance.ZombieFall(animTime: _deathClip.length);
     }
@@ -59,7 +59,7 @@ public class ZombieHP : MonoBehaviour
         _zombieInstance = GetComponent<ZombieInstance>();
         _zombAttack = GetComponent<ZombieAttack>();
     }
-    public void TakeDamage(int damage, Vector3 rotateTowardsDamageSource = new Vector3())
+    public virtual void TakeDamage(int damage, Vector3 rotateTowardsDamageSource = new Vector3())
     {
         HP -= damage;
         if (HP <= 0)
@@ -84,7 +84,7 @@ public class ZombieHP : MonoBehaviour
             _behitTween.Restart();
         }
     }
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         HP = maxHP;
         _zombieInstance.SetCollider(true);

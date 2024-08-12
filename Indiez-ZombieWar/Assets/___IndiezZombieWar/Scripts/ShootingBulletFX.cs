@@ -9,45 +9,61 @@ using UnityEngine.Pool;
 
 public class ShootingBulletFX : MonoBehaviour
 {
+    [HideInInspector]
     public Transform currentTarget;
     [SerializeField, HideInInspector]
     private ActionManager _actionManager;
     [SerializeField]
     private LineRenderer _lineRendererPrefab;
     [SerializeField]
-    private ZomHitFx _zombieBloodFxPrefab, _grenadeExplosionPrefab;
+    private ZomHitFx _zombieBloodFxPrefab, _grenadeExplosionPrefab, _bulletDecal;
     [SerializeField]
     private GrenadeBullet _grenadeBulletPrefab;
     private IObjectPool<LineRenderer> _lineRendererPool;
     private IObjectPool<ZomHitFx> _zombBloodFxPool;
     private IObjectPool<GrenadeBullet> _grenadeBulletPool;
     private IObjectPool<ZomHitFx> _grenadeExplosionPool;
+    private IObjectPool<ZomHitFx> _bulletDecalPool;
     [SerializeField]
-    public Transform MuzzlePos, _bulletFXParent;
+    public Transform _bulletFXParent;
+    [HideInInspector]
+    public Transform MuzzlePos;
     private RaycastHit[] _raycastHits = new RaycastHit[5];
     private Vector3[] _hitFxPosition = new Vector3[2];
-    [SerializeField]
+    [HideInInspector]
     public ParticleSystem MuzzleFlash;
     [HideInInspector]
     public float GunRange;
+    [SerializeField, HideInInspector]
+    private GrenadeLauncher _launcher;
     private void OnValidate()
     {
+        _launcher = FindObjectOfType<GrenadeLauncher>(true);
         _actionManager = FindObjectOfType<ActionManager>();
     }
     private void Start()
     {
         _lineRendererPool = new ObjectPool<LineRenderer>(OnCreateNewLineRenderer, GetLineRendererFromPool, OnReleaseLineRenderer, OnDestroyLineRenderer, false, 15, 100);
-        _zombBloodFxPool = new ObjectPool<ZomHitFx>(OnCreateNewBloodFx, GetZomHitFxFromPool, OnReleaseZomHitFx, OnDestroyZomHitFx, false, 15, 100);
         _grenadeBulletPool = new ObjectPool<GrenadeBullet>(OnCreateGrenadeBullet, GetGrenadeBulletFromPool, OnReleaseGrenadebulletFromPool, OnDestroyGrenadeBulletFromPool, false, 15, 100);
         _grenadeExplosionPool = new ObjectPool<ZomHitFx>(OnCreateExplosion, GetZomHitFxFromPool, OnReleaseZomHitFx, OnDestroyZomHitFx, false, 15, 100);
+        _zombBloodFxPool = new ObjectPool<ZomHitFx>(OnCreateNewBloodFx, GetZomHitFxFromPool, OnReleaseZomHitFx, OnDestroyZomHitFx, false, 15, 100);
+        _bulletDecalPool = new ObjectPool<ZomHitFx>(OnCreateBulletDecal, GetZomHitFxFromPool, OnReleaseZomHitFx, OnDestroyZomHitFx, false, 15, 100);
     }
     private GrenadeBullet OnCreateGrenadeBullet()
     {
         GrenadeBullet bullet = Instantiate(_grenadeBulletPrefab, _bulletFXParent);
         bullet.BulletFx = this;
+        bullet.Damage = _launcher.Damage;
         bullet.grenadeBulletPool = _grenadeBulletPool;
         bullet.gameObject.SetActive(false);
         return bullet;
+    }
+    private ZomHitFx OnCreateBulletDecal()
+    {
+        ZomHitFx fx = Instantiate(_bulletDecal, _bulletFXParent);
+        fx.hitFxPool = _bulletDecalPool;
+        fx.gameObject.SetActive(false);
+        return fx;
     }
     private ZomHitFx OnCreateExplosion()
     {
@@ -126,18 +142,25 @@ public class ShootingBulletFX : MonoBehaviour
         MuzzlePos = gun.MuzzlePoint;
         GunRange = gun.GunRange;
     }
-    public void PlayShootFX()
+    public void PlayShootFX(Vector3 endPoint, bool playDecal)
     {
         MuzzleFlash.Play();
         LineRenderer shootFx = _lineRendererPool.Get();
         _hitFxPosition[0] = MuzzlePos.position;
-        _hitFxPosition[1] = currentTarget == null ? (MuzzlePos.position + MuzzlePos.forward * GunRange) : (currentTarget.transform.position + new Vector3(0, 1.5f, 0));
+        _hitFxPosition[1] = endPoint;
         _hitFxPosition[1] += UnityEngine.Random.insideUnitSphere * 0.1f;
         shootFx.gameObject.SetActive(true);
         shootFx.SetPositions(_hitFxPosition);
         DOTween.To(() => shootFx.material.GetFloat("_Alpha"), (x) => shootFx.material.SetFloat("_Alpha", x), 0, 0.2f).OnComplete(() => _lineRendererPool.Release(shootFx));
+        if (playDecal)
+        {
+            var decal = _bulletDecalPool.Get();
+            decal.transform.SetPositionAndRotation(_hitFxPosition[1], Quaternion.LookRotation(_hitFxPosition[1] - _hitFxPosition[0]));
+            decal.gameObject.SetActive(true);
+            decal.Play();
+        }
     }
-    public void PlayShootFXShotgun(Vector3[] targets)
+    public void PlayShootFXShotgun(Vector3[] targets, bool[] playDecals)
     {
         MuzzleFlash.Play();
         for (int i = 0; i < targets.Length; i++)
@@ -149,6 +172,13 @@ public class ShootingBulletFX : MonoBehaviour
             shootFx.gameObject.SetActive(true);
             shootFx.SetPositions(_hitFxPosition);
             DOTween.To(() => shootFx.material.GetFloat("_Alpha"), (x) => shootFx.material.SetFloat("_Alpha", x), 0, 0.2f).OnComplete(() => _lineRendererPool.Release(shootFx));
+            if (playDecals[i])
+            {
+                var decal = _bulletDecalPool.Get();
+                decal.transform.SetPositionAndRotation(_hitFxPosition[1], Quaternion.LookRotation(_hitFxPosition[1] - _hitFxPosition[0]));
+                decal.gameObject.SetActive(true);
+                decal.Play();
+            }
         }
     }
     private Vector3 grenadeDefaultOffset = new Vector3(0, -1.5f, 6);

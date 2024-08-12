@@ -6,6 +6,7 @@ TagManager:
   tags:
   - FxTemporaire
   - PickUp
+  - Zombie
   layers:
   - Default
   - TransparentFX
