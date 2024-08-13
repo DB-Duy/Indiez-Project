@@ -14,6 +14,7 @@ public class GrenadeLauncher : Gun
         currentMagazineSize--;
         _gunAnimator.SetTrigger(_shootId);
         _actionManager.PerformShoot();
+        AudioPool.Instance.PlayShootNade();
         _bulletFX.PlayShootFXGrenadeLauncher();
         lastShotTime = Time.time;
     }

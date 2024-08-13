@@ -53,8 +53,10 @@ public class CharacterAnimationController : MonoBehaviour
         _shootGunId = Animator.StringToHash("Shoot");
         _deadId = Animator.StringToHash("Dead");
     }
+    private bool isDead = false;
     private void PlayDeadAnim()
     {
+        isDead = true;
         _aimingRig.weight = 0f;
         animator.SetTrigger(_deadId);
     }
@@ -65,11 +67,6 @@ public class CharacterAnimationController : MonoBehaviour
         _recoilTween.Restart();
     }
 
-    private void Start()
-    {
-
-
-    }
     private void OnDestroy()
     {
         _actionManager.OnTargetAcquired -= OnGetTarget;
@@ -84,6 +81,10 @@ public class CharacterAnimationController : MonoBehaviour
     }
     private void Update()
     {
+        if (isDead)
+        {
+            return;
+        }
         Vector3 gunOffset = isRecoil ? offsetRecoil : offset;
         if (RotateTarget == null)
         {

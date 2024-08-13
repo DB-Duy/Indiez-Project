@@ -113,6 +113,7 @@ public class Gun : MonoBehaviour
         _gunAnimator.SetTrigger(_shootId);
         PerformRaycastAR();
         _actionManager.PerformShoot();
+        AudioPool.Instance.PlayShootAR();
         lastShotTime = Time.time;
     }
 

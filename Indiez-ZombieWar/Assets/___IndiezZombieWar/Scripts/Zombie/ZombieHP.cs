@@ -62,6 +62,7 @@ public class ZombieHP : MonoBehaviour
     public virtual void TakeDamage(int damage, Vector3 rotateTowardsDamageSource = new Vector3())
     {
         HP -= damage;
+        AudioPool.Instance.PlayZombieSound();
         if (HP <= 0)
         {
             _zombieInstance.SetCollider(false);

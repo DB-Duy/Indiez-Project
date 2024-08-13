@@ -48,7 +48,7 @@ public class ZombieAttack : MonoBehaviour
         InvokeRepeating(nameof(UpdateAgentTarget), 0, 0.25f);
         InvokeRepeating(nameof(CheckAttackRange), 1, 0.25f);
     }
-    private void OnDisable()
+    public void OnDisable()
     {
         CancelInvoke(nameof(CheckAttackRange));
         CancelInvoke(nameof(UpdateAgentTarget));
@@ -73,6 +73,7 @@ public class ZombieAttack : MonoBehaviour
         {
             _zombInstance.agent.speed = 0.1f;
             _zombInstance.PlayAnimation(_attackClips[Random.Range(0, _attackClips.Length)], 0, 2f);
+            AudioPool.Instance.PlayZombieSound();
             DealDamageTween.Restart();
         }
         else if (_zombInstance.agent.speed != _zombInstance.currentAgentSpeed)

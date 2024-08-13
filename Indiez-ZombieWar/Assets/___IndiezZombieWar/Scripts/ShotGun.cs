@@ -48,6 +48,7 @@ public class ShotGun : Gun
         _gunAnimator.SetTrigger(_shootId);
         _bulletFX.PlayShootFXShotgun(shootTargets, playDecals);
         _actionManager.PerformShoot();
+        AudioPool.Instance.PlayShootShotgun();
         lastShotTime = Time.time;
     }
 

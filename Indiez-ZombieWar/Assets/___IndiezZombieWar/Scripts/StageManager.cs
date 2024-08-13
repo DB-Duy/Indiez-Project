@@ -56,12 +56,14 @@ public class StageManager : MonoBehaviour
         _actionManager.OnPlayerPickUpAmmo += ReleasePickUpAmmo;
         _actionManager.OnPlayerPickUpHealth += ReleasePickupHealth;
         _actionManager.OnZombieKilled += TrySpawnPickupOnZombieKilled;
+        _actionManager.OnPlayerDead += StopAllZombiesActivity;
     }
     private void OnDestroy()
     {
         _actionManager.OnPlayerPickUpAmmo -= ReleasePickUpAmmo;
         _actionManager.OnPlayerPickUpHealth -= ReleasePickupHealth;
         _actionManager.OnZombieKilled -= TrySpawnPickupOnZombieKilled;
+        _actionManager.OnPlayerDead -= StopAllZombiesActivity;
     }
 
     private void Start()
@@ -91,7 +93,16 @@ public class StageManager : MonoBehaviour
     public void StopAllZombiesActivity()
     {
         IsSpawningZombies = false;
-
+        for (int i = 0; i < _spawnAreas.Length; i++)
+        {
+            for (int j = 0; j < _spawnAreas[i].ActiveZombiesList.Count; j++)
+            {
+                var zomb = _spawnAreas[i].ActiveZombiesList[j];
+                zomb.agent.isStopped = true;
+                zomb.GetComponent<ZombieAttack>().OnDisable();
+            }
+        }
+        _boss.DisableBoss();
     }
     private void UpdateSpawnerSettings()
     {
@@ -216,20 +227,22 @@ public class StageManager : MonoBehaviour
         _currentEventWeaponCache = weaponCache;
         IsEventOccuring = true;
         OnActivateWeaponCacheEvent?.Invoke();
+        AudioPool.Instance.PlayEventStart();
         if (EventsCompleted == 2)
         {
             StartBossBattle();
             return;
         }
 
+        UIManager.instance.ShowEvent();
         _currentEventWeaponCache.ActivateWeaponCacheEvent();
         BaseZombCountPerSpawn = EventsCompleted * 0.5f;
         _eventTimeElapsed = 0;
         _eventTimerCoroutine = StartCoroutine(EventTimerCoroutine());
     }
-    [ContextMenu("start boss")]
     private void StartBossBattle()
     {
+        UIManager.instance.ShowBossFight();
         _boss.gameObject.SetActive(true);
         _boss.transform.DOMoveY(13.5f, 1f).OnComplete(() => _boss.ActivateBoss());
     }
@@ -249,6 +262,8 @@ public class StageManager : MonoBehaviour
         _currentEventWeaponCache.CompleteWeaponCacheEvent();
         IsEventOccuring = false;
         _playerInventory.AvailableGuns.Add(_gunsToUnlock[EventsCompleted - 1]);
+        UIManager.instance.ShowGunUnlock();
+        AudioPool.Instance.PlayUnlockGun();
         _currentEventWeaponCache = null;
     }
     private void ReleasePickUpAmmo(Pickup pickup)

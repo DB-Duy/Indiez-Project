@@ -31,7 +31,10 @@ public class BossHP : ZombieHP
         Collider = GetComponent<Collider>();
         _animator = GetComponent<Animator>();
     }
-
+    public void PlayBossStep()
+    {
+        AudioPool.Instance.PlayBossStep();
+    }
     protected override void Awake()
     {
         base.Awake();
@@ -60,6 +63,8 @@ public class BossHP : ZombieHP
         HP -= damage;
         if (HP <= 0)
         {
+            AudioPool.Instance.PlayBossSound();
+            UIManager.instance.ShowFinalText();
             Collider.enabled = false;
             _animator.Play(dieHash);
             _agent.isStopped = true;
@@ -84,11 +89,16 @@ public class BossHP : ZombieHP
         InvokeRepeating(nameof(CheckAttackRange), 1, 0.25f);
         _agent.enabled = true;
     }
-    private void DisableBoss()
+    public void DisableBoss()
     {
         CancelInvoke(nameof(CheckAttackRange));
         CancelInvoke(nameof(UpdateAgentTarget));
-        _agent.isStopped = true;
+
+        Collider.enabled = false;
+        if (_agent.isOnNavMesh)
+        {
+            _agent.isStopped = true;
+        }
     }
     private void CheckDealDamage()
     {
@@ -115,6 +125,7 @@ public class BossHP : ZombieHP
         if (isAttacking || HP <= 0) { return; }
         if (_agent.remainingDistance < attackRange)
         {
+            AudioPool.Instance.PlayBossSound();
             _agent.speed = 1f;
             _animator.Play(attackHash);
         }

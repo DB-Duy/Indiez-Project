@@ -36,14 +36,21 @@ public class AimZone : MonoBehaviour
     private void Awake()
     {
         _actionManager.OnRequestAcquireTarget += GetTargets;
+        _actionManager.OnPlayerDead += StopGettingTargets;
+    }
+    private void StopGettingTargets()
+    {
+        CancelInvoke(nameof(GetTargets));
     }
     private void Start()
     {
         InvokeRepeating(nameof(GetTargets), 0, 0.1f);
+
     }
     private void OnDestroy()
     {
         _actionManager.OnRequestAcquireTarget -= GetTargets;
+        _actionManager.OnPlayerDead -= StopGettingTargets;
     }
     public void GetTargets()
     {

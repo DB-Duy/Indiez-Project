@@ -11,10 +11,29 @@ public class RotateOnSwipe : MonoBehaviour
 
     private float rotationY = 0f;
     private Camera _mainCam;
+    [SerializeField]
+    private ActionManager _actionManager;
+    [SerializeField]
+    private Transform lookAt;
+    private bool isDead = false;
+    private void OnValidate()
+    {
+        _actionManager = FindObjectOfType<ActionManager>();
+    }
+    private void OnDead()
+    {
+        isDead = true;
+    }
+
     private void Awake()
     {
         _mainCam = Camera.main;
         rotationY = transform.rotation.eulerAngles.y;
+        _actionManager.OnPlayerDead += OnDead;
+    }
+    private void OnDestroy()
+    {
+        _actionManager.OnPlayerDead -= OnDead;
     }
     public void OnDrag(BaseEventData data)
     {
@@ -23,9 +42,20 @@ public class RotateOnSwipe : MonoBehaviour
     }
     private void RotateOnDrag(Vector2 dragDelta)
     {
+        Vector3 rot;
+        if (isDead)
+        {
+            rotationY += dragDelta.x * rotationSpeed * Time.deltaTime;
+
+            rot = lookAt.rotation.eulerAngles;
+            rot.y = rotationY;
+            lookAt.transform.rotation = Quaternion.Euler(rot);
+            return;
+        }
+
         rotationY += dragDelta.x * rotationSpeed * Time.deltaTime;
 
-        Vector3 rot = transform.rotation.eulerAngles;
+        rot = transform.rotation.eulerAngles;
         rot.y = rotationY;
         transform.rotation = Quaternion.Euler(rot);
     }

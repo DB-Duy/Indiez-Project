@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CharacterLocomotion : MonoBehaviour
@@ -34,8 +35,28 @@ public class CharacterLocomotion : MonoBehaviour
     float forward, strafe;//we will use them in animation variables
     private Camera cam;
     private Vector3 camPos;
+    [SerializeField]
+    private ActionManager _actionManager;
+    private bool isDead = false;
+    private void OnValidate()
+    {
+        _actionManager = FindObjectOfType<ActionManager>();
+    }
+    private void StopMoving()
+    {
+        isDead = true;
+    }
+    public void PlayStepAudio()
+    {
+        AudioPool.Instance.PlayStep();
+    }
+    private void OnDestroy()
+    {
+        _actionManager.OnPlayerDead -= StopMoving;
+    }
     void Awake()
     {
+        _actionManager.OnPlayerDead += StopMoving;
         cam = Camera.main;
         if (characterController == null)
         {
@@ -46,7 +67,7 @@ public class CharacterLocomotion : MonoBehaviour
         {
             characterVisual = transform;
         }
-        camTransform = Camera.main.transform;
+        camTransform = cam.transform;
     }
     void Start()
     {
@@ -57,6 +78,7 @@ public class CharacterLocomotion : MonoBehaviour
     }
     void Update()
     {
+        if (isDead) { return; }
         mag = Mathf.Clamp01(new Vector2(moveJoystick.Horizontal, moveJoystick.Vertical).sqrMagnitude);
         if (canStrafe)
         {

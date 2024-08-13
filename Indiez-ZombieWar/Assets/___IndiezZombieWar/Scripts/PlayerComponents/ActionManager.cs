@@ -33,14 +33,17 @@ public class ActionManager : MonoBehaviour
     public void PlayerPickUpAmmo(Pickup pickup)
     {
         OnPlayerPickUpAmmo?.Invoke(pickup);
+        AudioPool.Instance.PlayPickup();
     }
     public void PlayerPickUpHealth(Pickup pickup)
     {
         OnPlayerPickUpHealth?.Invoke(pickup);
+        AudioPool.Instance.PlayPickup();
     }
     public void EquipGun(Gun gun)
     {
         OnEquipGun?.Invoke(gun);
+        AudioPool.Instance.PlaySwitch();
     }
     public void ReloadComplete()
     {
@@ -57,6 +60,7 @@ public class ActionManager : MonoBehaviour
     public void PerformReload()
     {
         OnPerformReload?.Invoke();
+        AudioPool.Instance.PlayReload();
     }
     public void AcquireTarget(Transform target)
     {
@@ -73,5 +77,6 @@ public class ActionManager : MonoBehaviour
     public void PlayerDead()
     {
         OnPlayerDead?.Invoke();
+        AudioPool.Instance.PlayDie();
     }
 }
