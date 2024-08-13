@@ -20,8 +20,9 @@ public class GrenadeBullet : MonoBehaviour
     public void ExplodeBullet()
     {
         BulletFx.PlayExplosionAtPoint(transform.position);
-        grenadeBulletPool.Release(this);
         DamageZombies();
+        AudioPool.Instance.PlayNadeExplode();
+        grenadeBulletPool.Release(this);
     }
 
     private void DamageZombies()

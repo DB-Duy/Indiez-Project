@@ -3,7 +3,7 @@
     "m_SelectedProcess": {
         "deviceId": "2A101FDH2007AA",
         "name": "com.DBDuy.IndieZZombieWar",
-        "processId": 16116,
+        "processId": 7511,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -30,6 +30,12 @@
             "deviceId": "2A101FDH2007AA",
             "name": "com.DBDuy.IndieZZombieWar",
             "processId": 16116,
+            "exited": false
+        },
+        {
+            "deviceId": "2A101FDH2007AA",
+            "name": "com.DBDuy.IndieZZombieWar",
+            "processId": 7511,
             "exited": false
         }
     ],
